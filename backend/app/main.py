@@ -5,7 +5,7 @@ from app.database.connection import engine
 
 from app.models.user import User
 from app.routes.auth import router as auth_router
-
+from app.routes import jobs
 
 Base.metadata.create_all(bind=engine)
 
@@ -14,7 +14,9 @@ app = FastAPI(
     description="AI Powered Job Scam Detection Platform",
     version="1.0.0"
 )
+
 app.include_router(auth_router)
+app.include_router(jobs.router)  # ← Add this line
 
 @app.get("/")
 def root():
