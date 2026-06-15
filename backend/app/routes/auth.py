@@ -9,6 +9,16 @@ from app.schemas.user import (
 )
 from app.utils.security import hash_password
 
+from app.schemas.user import (
+    UserCreate,
+    UserResponse,
+    UserLogin,
+    Token
+)
+
+from app.utils.security import verify_password
+from app.utils.jwt import create_access_token
+
 router = APIRouter(
     prefix="/auth",
     tags=["Authentication"]
@@ -49,3 +59,43 @@ def register(
     db.refresh(new_user)
 
     return new_user
+
+@router.post(
+    "/login",
+    response_model=Token
+)
+def login(
+    user_credentials: UserLogin,
+    db: Session = Depends(get_db)
+):
+
+    user = db.query(User).filter(
+        User.email == user_credentials.email
+    ).first()
+
+    if not user:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid email or password"
+        )
+
+    if not verify_password(
+        user_credentials.password,
+        user.hashed_password
+    ):
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid email or password"
+        )
+
+    access_token = create_access_token(
+        data={
+            "sub": user.email
+        }
+    )
+
+    return {
+        "access_token": access_token,
+        "token_type": "bearer"
+    }
+
