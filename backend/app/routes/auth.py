@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 
 from app.database.connection import get_db
 from app.models.user import User
+from app.utils.dependencies import get_current_user
 from app.schemas.user import (
     UserCreate,
     UserResponse
@@ -18,6 +19,8 @@ from app.schemas.user import (
 
 from app.utils.security import verify_password
 from app.utils.jwt import create_access_token
+
+from fastapi.security import OAuth2PasswordBearer
 
 router = APIRouter(
     prefix="/auth",
@@ -99,3 +102,12 @@ def login(
         "token_type": "bearer"
     }
 
+@router.get(
+    "/me",
+    response_model=UserResponse
+)
+def get_me(
+    current_user: User = Depends(get_current_user)
+):
+
+    return current_user
