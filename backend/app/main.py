@@ -6,6 +6,8 @@ from app.database.connection import engine
 from app.models.user import User
 from app.routes.auth import router as auth_router
 from app.routes import jobs
+from app.models.user import User
+from app.models.job_analysis import JobAnalysis
 
 Base.metadata.create_all(bind=engine)
 
