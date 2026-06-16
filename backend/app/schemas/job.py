@@ -23,3 +23,9 @@ class JobHistoryResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+class JobStatsResponse(BaseModel):
+    total_analyses: int
+    high_risk: int
+    medium_risk: int
+    low_risk: int
