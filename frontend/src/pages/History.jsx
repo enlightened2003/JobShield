@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-
+import AnalysisModal from "../components/AnalysisModal";
+import { toast } from "react-toastify";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import HistoryCard from "../components/HistoryCard";
@@ -13,6 +14,7 @@ function History() {
 
     const [history, setHistory] = useState([]);
     const [search, setSearch] = useState("");
+    const [selectedAnalysis, setSelectedAnalysis] = useState(null);
 
     const loadHistory = async () => {
 
@@ -26,8 +28,7 @@ function History() {
 
             console.error(error);
 
-            alert("Failed to load history.");
-
+            toast.error("Failed to load history");
         }
 
     };
@@ -46,15 +47,16 @@ function History() {
 
         try {
 
-            await deleteHistory(id);
+           await deleteHistory(id);
 
-            loadHistory();
+toast.success("Analysis deleted successfully");
 
+loadHistory();
         } catch (error) {
 
             console.error(error);
 
-            alert("Delete failed.");
+            toast.error("Failed to delete analysis");
 
         }
 
@@ -98,11 +100,12 @@ function History() {
 
                             filteredHistory.map((item) => (
 
-                                <HistoryCard
-                                    key={item.id}
-                                    item={item}
-                                    onDelete={handleDelete}
-                                />
+                               <HistoryCard
+                                 key={item.id}
+                                item={item}
+                                onDelete={handleDelete}
+                                onView={setSelectedAnalysis}
+                               />
 
                             ))
 
@@ -127,9 +130,12 @@ function History() {
                         )}
 
                     </div>
-
+              <AnalysisModal
+    analysis={selectedAnalysis}
+    onClose={() => setSelectedAnalysis(null)}
+/>
                 </main>
-
+              
             </div>
 
         </div>

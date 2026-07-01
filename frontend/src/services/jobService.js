@@ -1,18 +1,26 @@
 import api from "../api/axios";
 
+/* Dashboard Statistics */
 export const getDashboardStats = async () => {
+
     const response = await api.get("/jobs/stats");
+
     return response.data;
+
 };
 
+/* Analyze Job Description */
 export const analyzeJob = async (jobDescription) => {
+
     const response = await api.post("/jobs/analyze", {
         job_description: jobDescription,
     });
 
     return response.data;
+
 };
 
+/* Analyze Image (OCR) */
 export const analyzeImage = async (imageFile) => {
 
     const formData = new FormData();
@@ -30,13 +38,15 @@ export const analyzeImage = async (imageFile) => {
     );
 
     return response.data;
+
 };
 
-export const getRecentHistory = async () => {
+/* Get Recent Analyses */
+export const getRecentAnalyses = async () => {
 
-    const response = await api.get(
-        "/jobs/history?limit=5"
-    );
+    const response = await api.get("/jobs/history");
 
-    return response.data;
+    // Return only the latest 5 analyses
+    return response.data.slice(0, 5);
+
 };

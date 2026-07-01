@@ -1,6 +1,6 @@
 import { FaTrash, FaEye } from "react-icons/fa";
 
-function HistoryCard({ item, onDelete }) {
+function HistoryCard({ item, onDelete, onView }) {
 
     const getBadge = (level) => {
 
@@ -69,12 +69,13 @@ function HistoryCard({ item, onDelete }) {
 
                 <div className="flex gap-3">
 
-                    <button
-                        className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
-                    >
-                        <FaEye />
-                        View
-                    </button>
+                   <button
+                      onClick={() => onView(item)}
+                      className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
+                >
+                      <FaEye />
+    View
+                 </button>
 
                     <button
                         onClick={() => onDelete(item.id)}
