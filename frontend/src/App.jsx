@@ -3,12 +3,16 @@ import { Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
-import History from "./pages/History";
 import AnalyzeJob from "./pages/AnalyzeJob";
+import History from "./pages/History";
 import NotFound from "./pages/NotFound";
 
+import ProtectedRoute from "./components/ProtectedRoute";
+
 function App() {
+
     return (
+
         <Routes>
 
             <Route
@@ -23,17 +27,29 @@ function App() {
 
             <Route
                 path="/dashboard"
-                element={<Dashboard />}
+                element={
+                    <ProtectedRoute>
+                        <Dashboard />
+                    </ProtectedRoute>
+                }
             />
 
             <Route
                 path="/analyze"
-                element={<AnalyzeJob />}
+                element={
+                    <ProtectedRoute>
+                        <AnalyzeJob />
+                    </ProtectedRoute>
+                }
             />
 
             <Route
                 path="/history"
-                element={<History />}
+                element={
+                    <ProtectedRoute>
+                        <History />
+                    </ProtectedRoute>
+                }
             />
 
             <Route
@@ -42,7 +58,9 @@ function App() {
             />
 
         </Routes>
+
     );
+
 }
 
 export default App;

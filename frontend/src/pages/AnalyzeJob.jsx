@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast } from "react-toastify";
 import { generatePDF } from "../utils/pdfGenerator";
 
 import Navbar from "../components/Navbar";
@@ -19,7 +20,7 @@ function AnalyzeJob() {
     const handleAnalyze = async () => {
 
         if (!jobDescription.trim()) {
-            alert("Please enter a job description.");
+            toast.warning("Please enter a job description.");
             return;
         }
 
@@ -31,11 +32,13 @@ function AnalyzeJob() {
 
             setResult(response);
 
+            toast.success("Analysis completed successfully!");
+
         } catch (error) {
 
             console.error(error);
 
-            alert("Analysis failed.");
+            toast.error("Analysis failed.");
 
         } finally {
 
@@ -55,17 +58,36 @@ function AnalyzeJob() {
 
             setResult(response);
 
+            toast.success("Image analyzed successfully!");
+
         } catch (error) {
 
             console.error(error);
 
-            alert("Image analysis failed.");
+            toast.error("Image analysis failed.");
 
         } finally {
 
             setLoading(false);
 
         }
+
+    };
+
+    const copyResult = () => {
+
+        navigator.clipboard.writeText(
+            `JobShield Analysis
+
+Risk Score: ${result.risk_score}%
+
+Risk Level: ${result.risk_level}
+
+Red Flags:
+${result.red_flags.join("\n")}`
+        );
+
+        toast.success("Analysis copied to clipboard!");
 
     };
 
@@ -84,8 +106,6 @@ function AnalyzeJob() {
                     <h1 className="text-3xl font-bold mb-6">
                         Analyze Job
                     </h1>
-
-                    {/* Input Card */}
 
                     <div className="bg-white rounded-xl shadow-md p-8">
 
@@ -124,8 +144,6 @@ function AnalyzeJob() {
 
                     </div>
 
-                    {/* Loading */}
-
                     {loading && (
 
                         <div className="bg-white rounded-xl shadow-md p-8 mt-8">
@@ -148,8 +166,6 @@ function AnalyzeJob() {
 
                     )}
 
-                    {/* Result */}
-
                     {result && (
 
                         <div className="bg-white rounded-xl shadow-md p-8 mt-8">
@@ -163,8 +179,6 @@ function AnalyzeJob() {
                             </p>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-
-                                {/* Risk Score */}
 
                                 <div className="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl p-6 text-white">
 
@@ -189,8 +203,6 @@ function AnalyzeJob() {
 
                                 </div>
 
-                                {/* Risk Level */}
-
                                 <div
                                     className={`rounded-xl p-6 text-white ${
                                         result.risk_level === "HIGH"
@@ -212,8 +224,6 @@ function AnalyzeJob() {
                                 </div>
 
                             </div>
-
-                            {/* Red Flags */}
 
                             <h3 className="text-2xl font-bold mb-4">
                                 ⚠ Detected Red Flags
@@ -244,24 +254,11 @@ function AnalyzeJob() {
 
                             </div>
 
-                            {/* Buttons */}
-
-                            <div className="mt-8 flex justify-end gap-4">
+                            <div className="mt-8 flex flex-wrap justify-end gap-4">
 
                                 <button
-                                    onClick={() =>
-                                        navigator.clipboard.writeText(
-                                            `JobShield Analysis
-
-Risk Score: ${result.risk_score}%
-
-Risk Level: ${result.risk_level}
-
-Red Flags:
-${result.red_flags.join("\n")}`
-                                        )
-                                    }
-                                    className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold"
+                                    onClick={copyResult}
+                                    className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition"
                                 >
                                     📋 Copy Result
                                 </button>
@@ -270,7 +267,7 @@ ${result.red_flags.join("\n")}`
                                     onClick={() =>
                                         generatePDF(result, jobDescription)
                                     }
-                                    className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold"
+                                    className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold transition"
                                 >
                                     📄 Download Report
                                 </button>

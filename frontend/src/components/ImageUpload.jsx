@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { toast } from "react-toastify";
 import { FaCloudUploadAlt } from "react-icons/fa";
 
 function ImageUpload({ onUpload, loading }) {
@@ -8,9 +9,30 @@ function ImageUpload({ onUpload, loading }) {
     const inputRef = useRef();
 
     const handleFile = (file) => {
-        if (file) {
-            setImage(file);
+
+        if (!file) return;
+
+        // Allow only image files
+        if (!file.type.startsWith("image/")) {
+            toast.error("Please upload a valid image file.");
+            return;
         }
+
+        setImage(file);
+
+        toast.success("Image selected successfully!");
+
+    };
+
+    const handleAnalyze = () => {
+
+        if (!image) {
+            toast.warning("Please choose an image first.");
+            return;
+        }
+
+        onUpload(image);
+
     };
 
     return (
@@ -28,7 +50,7 @@ function ImageUpload({ onUpload, loading }) {
                     e.preventDefault();
                     handleFile(e.dataTransfer.files[0]);
                 }}
-                className="border-2 border-dashed border-blue-400 rounded-xl p-10 text-center cursor-pointer hover:bg-blue-50 transition"
+                className="border-2 border-dashed border-blue-400 rounded-xl p-10 text-center cursor-pointer hover:bg-blue-50 transition duration-300"
             >
 
                 <FaCloudUploadAlt
@@ -45,7 +67,7 @@ function ImageUpload({ onUpload, loading }) {
                 </p>
 
                 <p className="text-sm text-gray-400 mt-2">
-                    JPG • JPEG • PNG
+                    Supported: JPG • JPEG • PNG
                 </p>
 
                 <input
@@ -53,21 +75,27 @@ function ImageUpload({ onUpload, loading }) {
                     hidden
                     type="file"
                     accept="image/*"
-                    onChange={(e) => handleFile(e.target.files[0])}
+                    onChange={(e) =>
+                        handleFile(e.target.files[0])
+                    }
                 />
 
             </div>
 
             {image && (
 
-                <div className="mt-5 p-4 bg-green-50 rounded-lg">
+                <div className="mt-5 bg-green-50 border border-green-200 rounded-xl p-4">
 
-                    <p className="font-semibold">
-                        Selected Image
+                    <p className="font-semibold text-green-700">
+                        ✅ Selected Image
                     </p>
 
-                    <p className="text-green-700">
+                    <p className="text-gray-700 mt-1">
                         {image.name}
+                    </p>
+
+                    <p className="text-sm text-gray-500">
+                        {(image.size / 1024).toFixed(1)} KB
                     </p>
 
                 </div>
@@ -75,18 +103,9 @@ function ImageUpload({ onUpload, loading }) {
             )}
 
             <button
-                onClick={() => {
-
-                    if (!image) {
-                        alert("Please choose an image.");
-                        return;
-                    }
-
-                    onUpload(image);
-
-                }}
+                onClick={handleAnalyze}
                 disabled={loading}
-                className={`mt-6 px-8 py-3 rounded-lg text-white transition ${
+                className={`mt-6 px-8 py-3 rounded-lg text-white font-semibold transition ${
                     loading
                         ? "bg-gray-400 cursor-not-allowed"
                         : "bg-green-600 hover:bg-green-700"
