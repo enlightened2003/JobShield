@@ -107,6 +107,11 @@ def analyze_job_image(
         file_path
     )
 
+    print("=" * 50)
+    print("OCR Extracted Text:")
+    print(extracted_text)
+    print("=" * 50)
+
     if not extracted_text.strip():
         raise HTTPException(
             status_code=400,
