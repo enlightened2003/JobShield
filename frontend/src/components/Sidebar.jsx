@@ -1,12 +1,11 @@
 import { Link, useLocation } from "react-router-dom";
-
 import {
     FaChartPie,
     FaSearch,
-    FaHistory
+    FaHistory,
 } from "react-icons/fa";
 
-function Sidebar() {
+function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
     const location = useLocation();
 
@@ -14,74 +13,100 @@ function Sidebar() {
         {
             name: "Dashboard",
             path: "/dashboard",
-            icon: <FaChartPie />
+            icon: <FaChartPie />,
         },
         {
             name: "Analyze Job",
             path: "/analyze",
-            icon: <FaSearch />
+            icon: <FaSearch />,
         },
         {
             name: "History",
             path: "/history",
-            icon: <FaHistory />
-        }
+            icon: <FaHistory />,
+        },
     ];
 
     return (
+        <>
+            {/* Overlay */}
+            {sidebarOpen && (
+                <div
+                    className="fixed inset-0 bg-black/40 z-40 md:hidden"
+                    onClick={() => setSidebarOpen(false)}
+                />
+            )}
 
-        <aside className="w-64 bg-slate-900 text-white min-h-screen shadow-lg">
+            <aside
+                className={`
+                    fixed md:static
+                    top-0 left-0
+                    h-screen
+                    w-64
+                    bg-slate-900
+                    text-white
+                    shadow-lg
+                    z-50
+                    transform
+                    transition-transform
+                    duration-300
 
-            <div className="p-6 border-b border-slate-700">
+                    ${
+                        sidebarOpen
+                            ? "translate-x-0"
+                            : "-translate-x-full md:translate-x-0"
+                    }
+                `}
+            >
 
-                <h1 className="text-3xl font-bold text-blue-400">
-                    JobShield
-                </h1>
+                <div className="p-6 border-b border-slate-700">
 
-                <p className="text-sm text-gray-400 mt-2">
-                    AI Job Scam Detector
-                </p>
+                    <h1 className="text-3xl font-bold text-blue-400">
+                        JobShield
+                    </h1>
 
-            </div>
+                    <p className="text-sm text-gray-400 mt-2">
+                        AI Job Scam Detector
+                    </p>
 
-            <nav className="p-5">
+                </div>
 
-                <ul className="space-y-3">
+                <nav className="p-5">
 
-                    {menuItems.map((item) => (
+                    <ul className="space-y-3">
 
-                        <li key={item.path}>
+                        {menuItems.map((item) => (
 
-                            <Link
-                                to={item.path}
-                                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200
-                                ${
-                                    location.pathname === item.path
-                                        ? "bg-blue-600 text-white"
-                                        : "hover:bg-slate-800 text-gray-300"
-                                }`}
-                            >
+                            <li key={item.path}>
 
-                                <span className="text-lg">
-                                    {item.icon}
-                                </span>
+                                <Link
+                                    to={item.path}
+                                    onClick={() => setSidebarOpen(false)}
+                                    className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+                                        location.pathname === item.path
+                                            ? "bg-blue-600 text-white"
+                                            : "hover:bg-slate-800 text-gray-300"
+                                    }`}
+                                >
 
-                                <span>
-                                    {item.name}
-                                </span>
+                                    <span className="text-lg">
+                                        {item.icon}
+                                    </span>
 
-                            </Link>
+                                    <span>{item.name}</span>
 
-                        </li>
+                                </Link>
 
-                    ))}
+                            </li>
 
-                </ul>
+                        ))}
 
-            </nav>
+                    </ul>
 
-        </aside>
+                </nav>
 
+            </aside>
+        </>
     );
 }
 
