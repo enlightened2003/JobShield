@@ -26,7 +26,8 @@ function AnalyzeJob() {
 
         try {
 
-            setLoading(true);
+          setResult(null);
+          setLoading(true);
 
             const response = await analyzeJob(jobDescription);
 
@@ -52,8 +53,8 @@ function AnalyzeJob() {
 
         try {
 
+            setResult(null);
             setLoading(true);
-
             const response = await analyzeImage(image);
 
             setResult(response);
