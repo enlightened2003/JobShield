@@ -21,8 +21,8 @@ function Navbar({ sidebarOpen, setSidebarOpen }) {
             className="
                 sticky
                 top-0
-                z-30
-                bg-white/80
+                z-20
+                bg-white/90
                 backdrop-blur-lg
                 border-b
                 border-gray-200
@@ -37,21 +37,31 @@ function Navbar({ sidebarOpen, setSidebarOpen }) {
                 <div className="flex items-center gap-4">
 
                     <button
-                        className="md:hidden text-2xl text-gray-700"
                         onClick={() => setSidebarOpen(!sidebarOpen)}
+                        className="
+                            md:hidden
+                            w-10
+                            h-10
+                            rounded-lg
+                            flex
+                            items-center
+                            justify-center
+                            hover:bg-gray-100
+                            transition
+                        "
                     >
-                        <FaBars />
+                        <FaBars size={22} />
                     </button>
 
                     <div>
 
-                        <h1 className="text-3xl font-extrabold bg-gradient-to-r from-blue-600 to-indigo-700 bg-clip-text text-transparent">
+                        <h1 className="text-2xl md:text-3xl font-extrabold bg-gradient-to-r from-blue-600 to-indigo-700 bg-clip-text text-transparent">
 
                             JobShield
 
                         </h1>
 
-                        <p className="text-gray-500 text-sm">
+                        <p className="hidden sm:block text-sm text-gray-500">
 
                             AI Powered Job Scam Detection
 
@@ -63,7 +73,7 @@ function Navbar({ sidebarOpen, setSidebarOpen }) {
 
                 {/* Right */}
 
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3 md:gap-4">
 
                     {/* Notification */}
 
@@ -76,29 +86,26 @@ function Navbar({ sidebarOpen, setSidebarOpen }) {
                             rounded-full
                             bg-gray-100
                             hover:bg-blue-100
-                            transition
                             items-center
                             justify-center
-                            text-gray-600
+                            transition
                         "
                     >
-
-                        <FaBell size={18} />
-
+                        <FaBell />
                     </button>
 
                     {/* User */}
 
-                    <div className="hidden md:flex items-center gap-3">
+                    <div className="hidden lg:flex items-center gap-3">
 
                         <FaUserCircle
-                            className="text-blue-600"
                             size={34}
+                            className="text-blue-600"
                         />
 
                         <div>
 
-                            <h3 className="font-semibold text-gray-800">
+                            <h3 className="font-semibold">
 
                                 Welcome
 
@@ -121,21 +128,26 @@ function Navbar({ sidebarOpen, setSidebarOpen }) {
                         className="
                             flex
                             items-center
+                            justify-center
                             gap-2
                             bg-red-500
                             hover:bg-red-600
-                            transition
                             text-white
-                            px-5
-                            py-2.5
                             rounded-xl
                             shadow-md
+                            transition
+                            w-11
+                            h-11
+                            md:w-auto
+                            md:h-auto
+                            md:px-5
+                            md:py-2.5
                         "
                     >
 
                         <FaSignOutAlt />
 
-                        <span className="hidden sm:block">
+                        <span className="hidden md:inline">
 
                             Logout
 
