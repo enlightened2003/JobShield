@@ -1,68 +1,78 @@
+import RecentAnalysis from "./RecentAnalysis";
+import { FaHistory } from "react-icons/fa";
+
 function RecentAnalyses({ analyses }) {
-
     return (
+        <div
+            className="
+                bg-white
+                rounded-3xl
+                shadow-lg
+                hover:shadow-2xl
+                transition-all
+                duration-300
+                border
+                border-gray-100
+                p-6
+            "
+        >
+            {/* Header */}
 
-        <div className="bg-white rounded-xl shadow-md p-6">
+            <div className="flex items-center gap-3 mb-8">
 
-            <h2 className="text-2xl font-bold mb-6">
-                Recent Analyses
-            </h2>
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-r from-indigo-500 to-blue-600 flex items-center justify-center text-white shadow-lg">
+
+                    <FaHistory size={22} />
+
+                </div>
+
+                <div>
+
+                    <h2 className="text-2xl font-bold text-gray-800">
+                        Recent Analyses
+                    </h2>
+
+                    <p className="text-gray-500 text-sm">
+                        Latest job scam detection reports
+                    </p>
+
+                </div>
+
+            </div>
 
             {analyses.length === 0 ? (
 
-                <p className="text-gray-500">
-                    No analyses available.
-                </p>
+                <div className="text-center py-16">
+
+                    <h3 className="text-xl font-semibold text-gray-700">
+                        No analyses yet
+                    </h3>
+
+                    <p className="text-gray-500 mt-2">
+                        Start analyzing jobs to see your history here.
+                    </p>
+
+                </div>
 
             ) : (
 
-                analyses.map((item) => (
+                <div className="space-y-5">
 
-                    <div
-                        key={item.id}
-                        className="flex justify-between border-b py-4"
-                    >
+                    {analyses.map((item) => (
 
-                        <div>
+                        <RecentAnalysis
+                            key={item.id}
+                            item={item}
+                        />
 
-                            <p className="font-semibold">
+                    ))}
 
-                                {item.job_description.substring(0, 40)}...
-
-                            </p>
-
-                            <p className="text-gray-500 text-sm">
-
-                                {new Date(item.created_at).toLocaleDateString()}
-
-                            </p>
-
-                        </div>
-
-                        <span
-                            className={`px-4 py-2 rounded-full text-white ${
-                                item.risk_level === "HIGH"
-                                    ? "bg-red-600"
-                                    : item.risk_level === "MEDIUM"
-                                    ? "bg-yellow-500"
-                                    : "bg-green-600"
-                            }`}
-                        >
-
-                            {item.risk_level}
-
-                        </span>
-
-                    </div>
-
-                ))
+                </div>
 
             )}
 
         </div>
-
     );
-
 }
 
 export default RecentAnalyses;

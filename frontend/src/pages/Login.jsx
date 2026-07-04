@@ -3,6 +3,14 @@ import { useForm } from "react-hook-form";
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
 
+import {
+    FaEnvelope,
+    FaLock,
+    FaEye,
+    FaEyeSlash,
+    FaShieldAlt,
+} from "react-icons/fa";
+
 import { loginUser } from "../services/authService";
 
 function Login() {
@@ -10,11 +18,12 @@ function Login() {
     const navigate = useNavigate();
 
     const [loading, setLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
     const {
         register,
         handleSubmit,
-        formState: { errors }
+        formState: { errors },
     } = useForm();
 
     const onSubmit = async (data) => {
@@ -54,76 +63,195 @@ function Login() {
 
     return (
 
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-600 to-indigo-700 p-4">
+        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 flex items-center justify-center px-4">
 
-            <div className="bg-white p-10 rounded-2xl shadow-xl w-full max-w-md">
+            <div className="grid lg:grid-cols-2 gap-12 max-w-6xl w-full items-center">
 
-                <h1 className="text-3xl font-bold text-center text-blue-600">
-                    🛡️ JobShield
-                </h1>
+                {/* Left Section */}
 
-                <p className="text-center text-gray-500 mt-2 mb-8">
-                    AI Powered Job Scam Detection
-                </p>
+                <div className="hidden lg:block text-white">
 
-                <form onSubmit={handleSubmit(onSubmit)}>
+                    <div className="flex items-center gap-4 mb-8">
 
-                    <input
-                        type="email"
-                        placeholder="Email"
-                        className="w-full border rounded-lg p-3 mb-2"
-                        {...register("email", {
-                            required: "Email is required"
-                        })}
-                    />
+                        <div className="w-20 h-20 rounded-3xl bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center shadow-2xl">
 
-                    {errors.email && (
-                        <p className="text-red-500 text-sm mb-4">
-                            {errors.email.message}
-                        </p>
-                    )}
+                            <FaShieldAlt className="text-4xl"/>
 
-                    <input
-                        type="password"
-                        placeholder="Password"
-                        className="w-full border rounded-lg p-3 mb-2"
-                        {...register("password", {
-                            required: "Password is required"
-                        })}
-                    />
+                        </div>
 
-                    {errors.password && (
-                        <p className="text-red-500 text-sm mb-4">
-                            {errors.password.message}
-                        </p>
-                    )}
+                        <div>
 
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className={`w-full p-3 rounded-lg text-white font-semibold transition ${
-                            loading
-                                ? "bg-gray-400 cursor-not-allowed"
-                                : "bg-blue-600 hover:bg-blue-700"
-                        }`}
+                            <h1 className="text-5xl font-bold">
+                                JobShield
+                            </h1>
+
+                            <p className="text-blue-200 mt-2">
+                                AI Powered Job Scam Detection
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <h2 className="text-4xl font-bold leading-tight">
+
+                        Protect yourself from
+                        fake job offers.
+
+                    </h2>
+
+                    <p className="mt-6 text-lg text-blue-100 leading-8">
+
+                        Analyze job descriptions and posters using AI,
+                        OCR and intelligent scam detection.
+
+                    </p>
+
+                </div>
+
+                {/* Login Card */}
+
+                <div className="bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl p-8 md:p-10">
+
+                    <h2 className="text-3xl font-bold text-gray-800">
+
+                        Welcome Back 👋
+
+                    </h2>
+
+                    <p className="text-gray-500 mt-2 mb-8">
+
+                        Login to continue using JobShield.
+
+                    </p>
+
+                    <form
+                        onSubmit={handleSubmit(onSubmit)}
+                        className="space-y-6"
                     >
-                        {loading ? "Logging in..." : "Login"}
-                    </button>
 
-                </form>
+                        {/* Email */}
 
-                <p className="text-center mt-6">
+                        <div>
 
-                    Don't have an account?{" "}
+                            <label className="font-medium">
 
-                    <Link
-                        to="/register"
-                        className="text-blue-600 font-semibold hover:underline"
-                    >
-                        Register
-                    </Link>
+                                Email
 
-                </p>
+                            </label>
+
+                            <div className="relative mt-2">
+
+                                <FaEnvelope className="absolute left-4 top-4 text-gray-400"/>
+
+                                <input
+                                    type="email"
+                                    placeholder="Enter your email"
+                                    className="w-full pl-12 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                                    {...register("email", {
+                                        required: "Email is required",
+                                    })}
+                                />
+
+                            </div>
+
+                            {errors.email && (
+
+                                <p className="text-red-500 text-sm mt-2">
+
+                                    {errors.email.message}
+
+                                </p>
+
+                            )}
+
+                        </div>
+
+                        {/* Password */}
+
+                        <div>
+
+                            <label className="font-medium">
+
+                                Password
+
+                            </label>
+
+                            <div className="relative mt-2">
+
+                                <FaLock className="absolute left-4 top-4 text-gray-400"/>
+
+                                <input
+                                    type={showPassword ? "text" : "password"}
+                                    placeholder="Enter your password"
+                                    className="w-full pl-12 pr-12 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                                    {...register("password", {
+                                        required: "Password is required",
+                                    })}
+                                />
+
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        setShowPassword(!showPassword)
+                                    }
+                                    className="absolute right-4 top-4 text-gray-500"
+                                >
+
+                                    {showPassword
+                                        ? <FaEyeSlash/>
+                                        : <FaEye/>}
+
+                                </button>
+
+                            </div>
+
+                            {errors.password && (
+
+                                <p className="text-red-500 text-sm mt-2">
+
+                                    {errors.password.message}
+
+                                </p>
+
+                            )}
+
+                        </div>
+
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className={`w-full py-3 rounded-xl font-semibold text-white transition ${
+                                loading
+                                    ? "bg-gray-400 cursor-not-allowed"
+                                    : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:scale-[1.02]"
+                            }`}
+                        >
+
+                            {loading
+                                ? "Logging in..."
+                                : "Login"}
+
+                        </button>
+
+                    </form>
+
+                    <p className="text-center mt-8">
+
+                        Don't have an account?{" "}
+
+                        <Link
+                            to="/register"
+                            className="text-blue-600 font-semibold hover:underline"
+                        >
+
+                            Register
+
+                        </Link>
+
+                    </p>
+
+                </div>
 
             </div>
 
