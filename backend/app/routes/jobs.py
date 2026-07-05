@@ -21,17 +21,10 @@ from app.schemas.job import (
     JobStatsResponse
 )
 
-from app.services.scam_detector import (
-    analyze_job
-)
+from app.services.scam_detector import analyze_job
+from app.services.ocr_service import extract_text_from_image
 
-from app.services.ocr_service import (
-    extract_text_from_image
-)
-
-from app.utils.dependencies import (
-    get_current_user
-)
+from app.utils.dependencies import get_current_user
 
 from app.models.user import User
 from app.models.job_analysis import JobAnalysis
@@ -53,18 +46,14 @@ def analyze_job_posting(
     db: Session = Depends(get_db)
 ):
 
-    result = analyze_job(
-        request.job_description
-    )
+    result = analyze_job(request.job_description)
 
     analysis = JobAnalysis(
         user_id=current_user.id,
         job_description=request.job_description,
         risk_score=result["risk_score"],
         risk_level=result["risk_level"],
-        red_flags=", ".join(
-            result["red_flags"]
-        )
+        red_flags=", ".join(result["red_flags"])
     )
 
     db.add(analysis)
@@ -84,28 +73,20 @@ def analyze_job_image(
     db: Session = Depends(get_db)
 ):
 
-    os.makedirs(
-        "uploads",
-        exist_ok=True
-    )
+    os.makedirs("uploads", exist_ok=True)
 
     file_path = os.path.join(
         "uploads",
         file.filename
     )
 
-    with open(
-        file_path,
-        "wb"
-    ) as buffer:
+    with open(file_path, "wb") as buffer:
         shutil.copyfileobj(
             file.file,
             buffer
         )
 
-    extracted_text = extract_text_from_image(
-        file_path
-    )
+    extracted_text = extract_text_from_image(file_path)
 
     print("=" * 50)
     print("OCR Extracted Text:")
@@ -118,25 +99,26 @@ def analyze_job_image(
             detail="No text detected in image"
         )
 
-    result = analyze_job(
-        extracted_text
-    )
+    result = analyze_job(extracted_text)
 
     analysis = JobAnalysis(
         user_id=current_user.id,
         job_description=extracted_text,
         risk_score=result["risk_score"],
         risk_level=result["risk_level"],
-        red_flags=", ".join(
-            result["red_flags"]
-        )
+        red_flags=", ".join(result["red_flags"])
     )
 
     db.add(analysis)
     db.commit()
     db.refresh(analysis)
 
-    return result
+    return {
+        "risk_score": result["risk_score"],
+        "risk_level": result["risk_level"],
+        "red_flags": result["red_flags"],
+        "extracted_text": extracted_text
+    }
 
 
 @router.get(

@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 
 
 class JobAnalysisRequest(BaseModel):
@@ -11,6 +11,7 @@ class JobAnalysisResponse(BaseModel):
     risk_score: int
     risk_level: str
     red_flags: List[str]
+    extracted_text: Optional[str] = None
 
 
 class JobHistoryResponse(BaseModel):
@@ -23,6 +24,7 @@ class JobHistoryResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
 
 class JobStatsResponse(BaseModel):
     total_analyses: int
