@@ -1,6 +1,10 @@
-from app.services.ocr_service import extract_text_from_image
+from PIL import Image
 import pytesseract
 
-print(
-    pytesseract.get_tesseract_version()
-)
+img = Image.open("test.png")  # Put a test image in the backend folder
+
+text = pytesseract.image_to_string(img)
+
+print("Detected Text:")
+print("----------------")
+print(text)
