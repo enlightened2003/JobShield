@@ -1,147 +1,101 @@
-import { useEffect, useState } from "react";
-import AnalysisModal from "../components/AnalysisModal";
-import { toast } from "react-toastify";
-import Navbar from "../components/Navbar";
-import Sidebar from "../components/Sidebar";
-import HistoryCard from "../components/HistoryCard";
+import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
+import { ChevronLeft, ChevronRight, Inbox, ScanSearch } from 'lucide-react'
+import { fetchHistory } from '../lib/api'
+import RiskBadge from '../components/RiskBadge'
+import EmptyState from '../components/EmptyState'
+import ScanLoader from '../components/ScanLoader'
 
-import {
-    getHistory,
-    deleteHistory
-} from "../services/historyService";
+const LIMIT = 10
 
-function History() {
+export default function History() {
+  const [page, setPage] = useState(1)
+  const [items, setItems] = useState([])
+  const [loading, setLoading] = useState(true)
 
-    const [history, setHistory] = useState([]);
-    const [search, setSearch] = useState("");
-    const [selectedAnalysis, setSelectedAnalysis] = useState(null);
+  useEffect(() => {
+    let cancelled = false
+    async function load() {
+      setLoading(true)
+      try {
+        const res = await fetchHistory({ page, limit: LIMIT })
+        if (!cancelled) setItems(res.data)
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
+    }
+    load()
+    return () => { cancelled = true }
+  }, [page])
 
-    const loadHistory = async () => {
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-1">
+        <h1 className="font-display text-2xl font-semibold text-mist-50">Scan history</h1>
+        <p className="text-sm text-mist-400">Every posting you've run through JobShield.</p>
+      </div>
 
-        try {
-
-            const data = await getHistory();
-
-            setHistory(data);
-
-        } catch (error) {
-
-            console.error(error);
-
-            toast.error("Failed to load history");
-        }
-
-    };
-
-    useEffect(() => {
-
-        loadHistory();
-
-    }, []);
-
-    const handleDelete = async (id) => {
-
-        if (!window.confirm("Delete this analysis?")) {
-            return;
-        }
-
-        try {
-
-           await deleteHistory(id);
-
-toast.success("Analysis deleted successfully");
-
-loadHistory();
-        } catch (error) {
-
-            console.error(error);
-
-            toast.error("Failed to delete analysis");
-
-        }
-
-    };
-
-    const filteredHistory = history.filter((item) =>
-        item.job_description
-            .toLowerCase()
-            .includes(search.toLowerCase())
-    );
-
-    return (
-
-        <div className="min-h-screen bg-gray-100">
-
-            <Navbar />
-
-            <div className="flex">
-
-                <Sidebar />
-
-                <main className="flex-1 p-8">
-
-                    <h1 className="text-3xl font-bold mb-6">
-
-                        Analysis History
-
-                    </h1>
-
-                    <input
-                        type="text"
-                        placeholder="🔍 Search analyses..."
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        className="w-full p-4 rounded-xl border mb-8"
-                    />
-
-                    <div className="space-y-6">
-
-                        {filteredHistory.length > 0 ? (
-
-                            filteredHistory.map((item) => (
-
-                               <HistoryCard
-                                 key={item.id}
-                                item={item}
-                                onDelete={handleDelete}
-                                onView={setSelectedAnalysis}
-                               />
-
-                            ))
-
-                        ) : (
-
-                            <div className="bg-white rounded-xl shadow-md p-8 text-center">
-
-                                <h2 className="text-xl font-semibold">
-
-                                    No analyses found
-
-                                </h2>
-
-                                <p className="text-gray-500 mt-2">
-
-                                    Analyze a job posting to see it here.
-
-                                </p>
-
-                            </div>
-
-                        )}
-
+      {loading ? (
+        <ScanLoader label="Loading history…" />
+      ) : items.length === 0 && page === 1 ? (
+        <EmptyState
+          icon={Inbox}
+          title="No scans yet"
+          description="Your scanned postings will show up here."
+          action={
+            <Link
+              to="/analyze"
+              className="mt-1 flex items-center gap-1.5 text-sm font-medium text-signal-400 hover:underline"
+            >
+              <ScanSearch className="h-3.5 w-3.5" /> Scan a posting
+            </Link>
+          }
+        />
+      ) : (
+        <>
+          <div className="overflow-hidden rounded-2xl border border-ink-600 bg-ink-800/60">
+            <ul className="flex flex-col divide-y divide-ink-600">
+              {items.map((item) => (
+                <li key={item.id}>
+                  <Link
+                    to={`/history/${item.id}`}
+                    className="flex items-center justify-between gap-4 px-5 py-4 transition-colors hover:bg-ink-700/40"
+                  >
+                    <div className="min-w-0">
+                      <p className="truncate text-sm text-mist-100">{item.job_description}</p>
+                      <p className="font-mono-num mt-1 text-xs text-mist-400">
+                        {new Date(item.created_at).toLocaleString()}
+                      </p>
                     </div>
-              <AnalysisModal
-    analysis={selectedAnalysis}
-    onClose={() => setSelectedAnalysis(null)}
-/>
-                </main>
-              
-            </div>
+                    <div className="flex shrink-0 items-center gap-3">
+                      <span className="font-mono-num text-sm text-mist-200">{item.risk_score}</span>
+                      <RiskBadge level={item.risk_level} />
+                    </div>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
 
-        </div>
-
-    );
-
+          <div className="flex items-center justify-between">
+            <button
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={page === 1}
+              className="flex items-center gap-1.5 rounded-lg border border-ink-600 px-3 py-1.5 text-sm text-mist-200 disabled:opacity-40"
+            >
+              <ChevronLeft className="h-3.5 w-3.5" /> Previous
+            </button>
+            <span className="font-mono-num text-xs text-mist-400">Page {page}</span>
+            <button
+              onClick={() => setPage((p) => p + 1)}
+              disabled={items.length < LIMIT}
+              className="flex items-center gap-1.5 rounded-lg border border-ink-600 px-3 py-1.5 text-sm text-mist-200 disabled:opacity-40"
+            >
+              Next <ChevronRight className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        </>
+      )}
+    </div>
+  )
 }
-
-export default History;

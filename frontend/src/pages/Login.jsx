@@ -1,264 +1,94 @@
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { useNavigate, Link } from "react-router-dom";
-import { toast } from "react-toastify";
-
-import {
-    FaEnvelope,
-    FaLock,
-    FaEye,
-    FaEyeSlash,
-    FaShieldAlt,
-} from "react-icons/fa";
-
-import { loginUser } from "../services/authService";
-
-function Login() {
-
-    const navigate = useNavigate();
-
-    const [loading, setLoading] = useState(false);
-    const [showPassword, setShowPassword] = useState(false);
-
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-    } = useForm();
-
-    const onSubmit = async (data) => {
-
-        try {
-
-            setLoading(true);
-
-            const response = await loginUser(
-                data.email,
-                data.password
-            );
-
-            localStorage.setItem(
-                "token",
-                response.access_token
-            );
-
-            toast.success("Login successful!");
-
-            navigate("/dashboard");
-
-        } catch (error) {
-
-            toast.error(
-                error.response?.data?.detail ||
-                "Login failed."
-            );
-
-        } finally {
-
-            setLoading(false);
-
-        }
-
-    };
-
-    return (
-
-        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 flex items-center justify-center px-4">
-
-            <div className="grid lg:grid-cols-2 gap-12 max-w-6xl w-full items-center">
-
-                {/* Left Section */}
-
-                <div className="hidden lg:block text-white">
-
-                    <div className="flex items-center gap-4 mb-8">
-
-                        <div className="w-20 h-20 rounded-3xl bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center shadow-2xl">
-
-                            <FaShieldAlt className="text-4xl"/>
-
-                        </div>
-
-                        <div>
-
-                            <h1 className="text-5xl font-bold">
-                                JobShield
-                            </h1>
-
-                            <p className="text-blue-200 mt-2">
-                                AI Powered Job Scam Detection
-                            </p>
-
-                        </div>
-
-                    </div>
-
-                    <h2 className="text-4xl font-bold leading-tight">
-
-                        Protect yourself from
-                        fake job offers.
-
-                    </h2>
-
-                    <p className="mt-6 text-lg text-blue-100 leading-8">
-
-                        Analyze job descriptions and posters using AI,
-                        OCR and intelligent scam detection.
-
-                    </p>
-
-                </div>
-
-                {/* Login Card */}
-
-                <div className="bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl p-8 md:p-10">
-
-                    <h2 className="text-3xl font-bold text-gray-800">
-
-                        Welcome Back 👋
-
-                    </h2>
-
-                    <p className="text-gray-500 mt-2 mb-8">
-
-                        Login to continue using JobShield.
-
-                    </p>
-
-                    <form
-                        onSubmit={handleSubmit(onSubmit)}
-                        className="space-y-6"
-                    >
-
-                        {/* Email */}
-
-                        <div>
-
-                            <label className="font-medium">
-
-                                Email
-
-                            </label>
-
-                            <div className="relative mt-2">
-
-                                <FaEnvelope className="absolute left-4 top-4 text-gray-400"/>
-
-                                <input
-                                    type="email"
-                                    placeholder="Enter your email"
-                                    className="w-full pl-12 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
-                                    {...register("email", {
-                                        required: "Email is required",
-                                    })}
-                                />
-
-                            </div>
-
-                            {errors.email && (
-
-                                <p className="text-red-500 text-sm mt-2">
-
-                                    {errors.email.message}
-
-                                </p>
-
-                            )}
-
-                        </div>
-
-                        {/* Password */}
-
-                        <div>
-
-                            <label className="font-medium">
-
-                                Password
-
-                            </label>
-
-                            <div className="relative mt-2">
-
-                                <FaLock className="absolute left-4 top-4 text-gray-400"/>
-
-                                <input
-                                    type={showPassword ? "text" : "password"}
-                                    placeholder="Enter your password"
-                                    className="w-full pl-12 pr-12 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
-                                    {...register("password", {
-                                        required: "Password is required",
-                                    })}
-                                />
-
-                                <button
-                                    type="button"
-                                    onClick={() =>
-                                        setShowPassword(!showPassword)
-                                    }
-                                    className="absolute right-4 top-4 text-gray-500"
-                                >
-
-                                    {showPassword
-                                        ? <FaEyeSlash/>
-                                        : <FaEye/>}
-
-                                </button>
-
-                            </div>
-
-                            {errors.password && (
-
-                                <p className="text-red-500 text-sm mt-2">
-
-                                    {errors.password.message}
-
-                                </p>
-
-                            )}
-
-                        </div>
-
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className={`w-full py-3 rounded-xl font-semibold text-white transition ${
-                                loading
-                                    ? "bg-gray-400 cursor-not-allowed"
-                                    : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:scale-[1.02]"
-                            }`}
-                        >
-
-                            {loading
-                                ? "Logging in..."
-                                : "Login"}
-
-                        </button>
-
-                    </form>
-
-                    <p className="text-center mt-8">
-
-                        Don't have an account?{" "}
-
-                        <Link
-                            to="/register"
-                            className="text-blue-600 font-semibold hover:underline"
-                        >
-
-                            Register
-
-                        </Link>
-
-                    </p>
-
-                </div>
-
-            </div>
-
+import { useState } from 'react'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
+import { ShieldCheck, ArrowRight } from 'lucide-react'
+import Logo from '../components/Logo'
+import { useAuth } from '../context/AuthContext'
+
+export default function Login() {
+  const { login } = useAuth()
+  const navigate = useNavigate()
+  const location = useLocation()
+  const [form, setForm] = useState({ email: '', password: '' })
+  const [error, setError] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+
+  async function handleSubmit(e) {
+    e.preventDefault()
+    setError('')
+    setSubmitting(true)
+    try {
+      await login(form)
+      navigate(location.state?.from?.pathname || '/dashboard', { replace: true })
+    } catch (err) {
+      setError(err.response?.data?.detail || 'Could not sign in. Check your details and try again.')
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  return (
+    <div className="flex min-h-screen items-center justify-center px-6 py-12">
+      <div className="w-full max-w-sm">
+        <Link to="/" className="mb-8 flex items-center justify-center gap-2">
+          <Logo size={26} />
+          <span className="font-display text-lg font-semibold text-mist-50">JobShield</span>
+        </Link>
+
+        <div className="rounded-2xl border border-ink-600 bg-ink-800/60 p-7">
+          <div className="mb-6 flex items-center gap-2 text-signal-400">
+            <ShieldCheck className="h-4 w-4" />
+            <span className="text-xs uppercase tracking-[0.14em]">Welcome back</span>
+          </div>
+          <h1 className="font-display mb-6 text-2xl font-semibold text-mist-50">Sign in to your account</h1>
+
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <label className="flex flex-col gap-1.5">
+              <span className="text-xs font-medium text-mist-400">Email</span>
+              <input
+                type="email"
+                required
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                className="rounded-lg border border-ink-600 bg-ink-900 px-3.5 py-2.5 text-sm text-mist-50 outline-none placeholder:text-mist-400 focus:border-signal-500"
+                placeholder="you@example.com"
+              />
+            </label>
+            <label className="flex flex-col gap-1.5">
+              <span className="text-xs font-medium text-mist-400">Password</span>
+              <input
+                type="password"
+                required
+                value={form.password}
+                onChange={(e) => setForm({ ...form, password: e.target.value })}
+                className="rounded-lg border border-ink-600 bg-ink-900 px-3.5 py-2.5 text-sm text-mist-50 outline-none placeholder:text-mist-400 focus:border-signal-500"
+                placeholder="••••••••"
+              />
+            </label>
+
+            {error && (
+              <p className="rounded-lg border border-danger-500/30 bg-danger-500/10 px-3 py-2 text-sm text-danger-500">
+                {error}
+              </p>
+            )}
+
+            <button
+              type="submit"
+              disabled={submitting}
+              className="mt-2 flex items-center justify-center gap-2 rounded-lg bg-signal-500 px-4 py-2.5 text-sm font-semibold text-ink-950 transition-opacity hover:opacity-90 disabled:opacity-50"
+            >
+              {submitting ? 'Signing in…' : 'Sign in'}
+              {!submitting && <ArrowRight className="h-4 w-4" />}
+            </button>
+          </form>
         </div>
 
-    );
-
+        <p className="mt-6 text-center text-sm text-mist-400">
+          New to JobShield?{' '}
+          <Link to="/register" className="font-medium text-signal-400 hover:underline">
+            Create an account
+          </Link>
+        </p>
+      </div>
+    </div>
+  )
 }
-
-export default Login;

@@ -1,99 +1,34 @@
-import { Routes, Route } from "react-router-dom";
-import { AnimatePresence, motion } from "framer-motion";
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { AuthProvider } from './context/AuthContext'
+import ProtectedRoute from './components/ProtectedRoute'
+import Landing from './pages/Landing'
+import Login from './pages/Login'
+import Register from './pages/Register'
+import Dashboard from './pages/Dashboard'
+import Analyze from './pages/Analyze'
+import History from './pages/History'
+import AnalysisDetail from './pages/AnalysisDetail'
+import NotFound from './pages/NotFound'
 
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Dashboard from "./pages/Dashboard";
-import AnalyzeJob from "./pages/AnalyzeJob";
-import History from "./pages/History";
-import NotFound from "./pages/NotFound";
+export default function App() {
+  return (
+    <BrowserRouter>
+      <AuthProvider>
+        <Routes>
+          <Route path="/" element={<Landing />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
 
-import ProtectedRoute from "./components/ProtectedRoute";
+          <Route element={<ProtectedRoute />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/analyze" element={<Analyze />} />
+            <Route path="/history" element={<History />} />
+            <Route path="/history/:id" element={<AnalysisDetail />} />
+          </Route>
 
-const Page = ({ children }) => (
-    <motion.div
-        initial={{ opacity: 0, y: 18 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -18 }}
-        transition={{
-            duration: 0.45,
-            ease: [0.22, 1, 0.36, 1],
-        }}
-    >
-        {children}
-    </motion.div>
-);
-
-function App() {
-    return (
-        <AnimatePresence mode="wait">
-
-            <Routes>
-
-                <Route
-                    path="/"
-                    element={
-                        <Page>
-                            <Login />
-                        </Page>
-                    }
-                />
-
-                <Route
-                    path="/register"
-                    element={
-                        <Page>
-                            <Register />
-                        </Page>
-                    }
-                />
-
-                <Route
-                    path="/dashboard"
-                    element={
-                        <ProtectedRoute>
-                            <Page>
-                                <Dashboard />
-                            </Page>
-                        </ProtectedRoute>
-                    }
-                />
-
-                <Route
-                    path="/analyze"
-                    element={
-                        <ProtectedRoute>
-                            <Page>
-                                <AnalyzeJob />
-                            </Page>
-                        </ProtectedRoute>
-                    }
-                />
-
-                <Route
-                    path="/history"
-                    element={
-                        <ProtectedRoute>
-                            <Page>
-                                <History />
-                            </Page>
-                        </ProtectedRoute>
-                    }
-                />
-
-                <Route
-                    path="*"
-                    element={
-                        <Page>
-                            <NotFound />
-                        </Page>
-                    }
-                />
-
-            </Routes>
-
-        </AnimatePresence>
-    );
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </AuthProvider>
+    </BrowserRouter>
+  )
 }
-
-export default App;

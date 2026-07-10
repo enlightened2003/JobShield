@@ -1,281 +1,106 @@
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { useNavigate, Link } from "react-router-dom";
-import { toast } from "react-toastify";
-
-import {
-    FaUser,
-    FaEnvelope,
-    FaLock,
-    FaEye,
-    FaEyeSlash,
-    FaShieldAlt,
-} from "react-icons/fa";
-
-import { registerUser } from "../services/authService";
-
-function Register() {
-
-    const navigate = useNavigate();
-
-    const [loading, setLoading] = useState(false);
-    const [showPassword, setShowPassword] = useState(false);
-
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-    } = useForm();
-
-    const onSubmit = async (data) => {
-
-        try {
-
-            setLoading(true);
-
-            await registerUser(
-                data.username,
-                data.email,
-                data.password
-            );
-
-            toast.success("Registration successful!");
-
-            navigate("/");
-
-        } catch (error) {
-
-            toast.error(
-                error.response?.data?.detail ||
-                "Registration failed."
-            );
-
-        } finally {
-
-            setLoading(false);
-
-        }
-
-    };
-
-    return (
-
-        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 flex items-center justify-center px-4">
-
-            <div className="grid lg:grid-cols-2 gap-12 max-w-6xl w-full items-center">
-
-                {/* Left Section */}
-
-                <div className="hidden lg:block text-white">
-
-                    <div className="flex items-center gap-4 mb-8">
-
-                        <div className="w-20 h-20 rounded-3xl bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center shadow-2xl">
-
-                            <FaShieldAlt className="text-4xl" />
-
-                        </div>
-
-                        <div>
-
-                            <h1 className="text-5xl font-bold">
-                                JobShield
-                            </h1>
-
-                            <p className="text-blue-200 mt-2">
-                                AI Powered Job Scam Detection
-                            </p>
-
-                        </div>
-
-                    </div>
-
-                    <h2 className="text-4xl font-bold leading-tight">
-
-                        Join JobShield today.
-
-                    </h2>
-
-                    <p className="mt-6 text-lg text-blue-100 leading-8">
-
-                        Create your account and start protecting yourself
-                        from fake job offers using AI-powered scam detection.
-
-                    </p>
-
-                </div>
-
-                {/* Register Card */}
-
-                <div className="bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl p-8 md:p-10">
-
-                    <h2 className="text-3xl font-bold text-gray-800">
-
-                        Create Account 🚀
-
-                    </h2>
-
-                    <p className="text-gray-500 mt-2 mb-8">
-
-                        Register to start using JobShield.
-
-                    </p>
-
-                    <form
-                        onSubmit={handleSubmit(onSubmit)}
-                        className="space-y-6"
-                    >
-
-                        {/* Username */}
-
-                        <div>
-
-                            <label className="font-medium">
-                                Username
-                            </label>
-
-                            <div className="relative mt-2">
-
-                                <FaUser className="absolute left-4 top-4 text-gray-400" />
-
-                                <input
-                                    type="text"
-                                    placeholder="Enter username"
-                                    className="w-full pl-12 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
-                                    {...register("username", {
-                                        required: "Username is required",
-                                    })}
-                                />
-
-                            </div>
-
-                            {errors.username && (
-                                <p className="text-red-500 text-sm mt-2">
-                                    {errors.username.message}
-                                </p>
-                            )}
-
-                        </div>
-
-                        {/* Email */}
-
-                        <div>
-
-                            <label className="font-medium">
-                                Email
-                            </label>
-
-                            <div className="relative mt-2">
-
-                                <FaEnvelope className="absolute left-4 top-4 text-gray-400" />
-
-                                <input
-                                    type="email"
-                                    placeholder="Enter email"
-                                    className="w-full pl-12 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
-                                    {...register("email", {
-                                        required: "Email is required",
-                                    })}
-                                />
-
-                            </div>
-
-                            {errors.email && (
-                                <p className="text-red-500 text-sm mt-2">
-                                    {errors.email.message}
-                                </p>
-                            )}
-
-                        </div>
-
-                        {/* Password */}
-
-                        <div>
-
-                            <label className="font-medium">
-                                Password
-                            </label>
-
-                            <div className="relative mt-2">
-
-                                <FaLock className="absolute left-4 top-4 text-gray-400" />
-
-                                <input
-                                    type={showPassword ? "text" : "password"}
-                                    placeholder="Enter password"
-                                    className="w-full pl-12 pr-12 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
-                                    {...register("password", {
-                                        required: "Password is required",
-                                        minLength: {
-                                            value: 6,
-                                            message: "Password must be at least 6 characters",
-                                        },
-                                    })}
-                                />
-
-                                <button
-                                    type="button"
-                                    onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-4 top-4 text-gray-500"
-                                >
-
-                                    {showPassword
-                                        ? <FaEyeSlash />
-                                        : <FaEye />}
-
-                                </button>
-
-                            </div>
-
-                            {errors.password && (
-                                <p className="text-red-500 text-sm mt-2">
-                                    {errors.password.message}
-                                </p>
-                            )}
-
-                        </div>
-
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className={`w-full py-3 rounded-xl font-semibold text-white transition ${
-                                loading
-                                    ? "bg-gray-400 cursor-not-allowed"
-                                    : "bg-gradient-to-r from-green-600 to-emerald-600 hover:scale-[1.02]"
-                            }`}
-                        >
-
-                            {loading
-                                ? "Creating Account..."
-                                : "Create Account"}
-
-                        </button>
-
-                    </form>
-
-                    <p className="text-center mt-8">
-
-                        Already have an account?{" "}
-
-                        <Link
-                            to="/"
-                            className="text-blue-600 font-semibold hover:underline"
-                        >
-
-                            Login
-
-                        </Link>
-
-                    </p>
-
-                </div>
-
-            </div>
-
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { ShieldPlus, ArrowRight } from 'lucide-react'
+import Logo from '../components/Logo'
+import { useAuth } from '../context/AuthContext'
+
+export default function Register() {
+  const { register } = useAuth()
+  const navigate = useNavigate()
+  const [form, setForm] = useState({ username: '', email: '', password: '' })
+  const [error, setError] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+
+  async function handleSubmit(e) {
+    e.preventDefault()
+    setError('')
+    setSubmitting(true)
+    try {
+      await register(form)
+      navigate('/dashboard', { replace: true })
+    } catch (err) {
+      setError(err.response?.data?.detail || 'Could not create your account. Try a different email.')
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  return (
+    <div className="flex min-h-screen items-center justify-center px-6 py-12">
+      <div className="w-full max-w-sm">
+        <Link to="/" className="mb-8 flex items-center justify-center gap-2">
+          <Logo size={26} />
+          <span className="font-display text-lg font-semibold text-mist-50">JobShield</span>
+        </Link>
+
+        <div className="rounded-2xl border border-ink-600 bg-ink-800/60 p-7">
+          <div className="mb-6 flex items-center gap-2 text-signal-400">
+            <ShieldPlus className="h-4 w-4" />
+            <span className="text-xs uppercase tracking-[0.14em]">Get started</span>
+          </div>
+          <h1 className="font-display mb-6 text-2xl font-semibold text-mist-50">Create your account</h1>
+
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <label className="flex flex-col gap-1.5">
+              <span className="text-xs font-medium text-mist-400">Username</span>
+              <input
+                type="text"
+                required
+                minLength={3}
+                value={form.username}
+                onChange={(e) => setForm({ ...form, username: e.target.value })}
+                className="rounded-lg border border-ink-600 bg-ink-900 px-3.5 py-2.5 text-sm text-mist-50 outline-none placeholder:text-mist-400 focus:border-signal-500"
+                placeholder="jane_doe"
+              />
+            </label>
+            <label className="flex flex-col gap-1.5">
+              <span className="text-xs font-medium text-mist-400">Email</span>
+              <input
+                type="email"
+                required
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                className="rounded-lg border border-ink-600 bg-ink-900 px-3.5 py-2.5 text-sm text-mist-50 outline-none placeholder:text-mist-400 focus:border-signal-500"
+                placeholder="you@example.com"
+              />
+            </label>
+            <label className="flex flex-col gap-1.5">
+              <span className="text-xs font-medium text-mist-400">Password</span>
+              <input
+                type="password"
+                required
+                minLength={6}
+                value={form.password}
+                onChange={(e) => setForm({ ...form, password: e.target.value })}
+                className="rounded-lg border border-ink-600 bg-ink-900 px-3.5 py-2.5 text-sm text-mist-50 outline-none placeholder:text-mist-400 focus:border-signal-500"
+                placeholder="At least 6 characters"
+              />
+            </label>
+
+            {error && (
+              <p className="rounded-lg border border-danger-500/30 bg-danger-500/10 px-3 py-2 text-sm text-danger-500">
+                {error}
+              </p>
+            )}
+
+            <button
+              type="submit"
+              disabled={submitting}
+              className="mt-2 flex items-center justify-center gap-2 rounded-lg bg-signal-500 px-4 py-2.5 text-sm font-semibold text-ink-950 transition-opacity hover:opacity-90 disabled:opacity-50"
+            >
+              {submitting ? 'Creating account…' : 'Create account'}
+              {!submitting && <ArrowRight className="h-4 w-4" />}
+            </button>
+          </form>
         </div>
 
-    );
-
+        <p className="mt-6 text-center text-sm text-mist-400">
+          Already scanning with us?{' '}
+          <Link to="/login" className="font-medium text-signal-400 hover:underline">
+            Sign in
+          </Link>
+        </p>
+      </div>
+    </div>
+  )
 }
-
-export default Register;

@@ -1,16 +1,52 @@
-# React + Vite
+# JobShield — Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React + Vite + Tailwind frontend for the JobShield FastAPI backend (AI-powered job scam detector).
 
-Currently, two official plugins are available:
+## What's here
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Landing page** — pitch + live demo of the risk gauge
+- **Auth** — register / login (JWT stored client-side, attached to every request)
+- **Dashboard** — total/high/medium/low risk stats, a breakdown chart, and your 5 most recent scans
+- **Scan a posting** — paste a job description, or upload a screenshot (OCR handled by the backend)
+- **History** — paginated list of every past scan, with a detail view and delete
+- Dark "security scanner" visual style, with a signature radial risk-gauge component that sweeps in on each result
 
-## React Compiler
+## Setup
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```bash
+npm install
+cp .env.example .env   # point VITE_API_URL at your backend if it's not on localhost:8000
+npm run dev
+```
 
-## Expanding the ESLint configuration
+The app runs at `http://localhost:5173` by default — this already matches the CORS origins allowed
+in the backend's `app/main.py`. If you deploy the frontend elsewhere (e.g. Vercel), add that origin
+to the backend's `origins` list.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Backend contract this frontend expects
+
+| Method | Path                  | Auth | Notes |
+|--------|-----------------------|------|-------|
+| POST   | `/auth/register`      | –    | `{ username, email, password }` |
+| POST   | `/auth/login`         | –    | form-encoded `username` (email) + `password`, returns `{ access_token, token_type }` |
+| GET    | `/auth/me`             | ✓    | current user |
+| POST   | `/jobs/analyze`        | ✓    | `{ job_description }` |
+| POST   | `/jobs/analyze-image`  | ✓    | multipart `file` |
+| GET    | `/jobs/history?page=&limit=` | ✓ | paginated list |
+| GET    | `/jobs/stats`          | ✓    | risk-level counts |
+| GET    | `/jobs/{id}`           | ✓    | one analysis |
+| DELETE | `/jobs/{id}`           | ✓    | delete one analysis |
+
+## Build
+
+```bash
+npm run build   # outputs to dist/
+npm run preview # serve the production build locally
+```
+
+## Notes for showing this to recruiters
+
+- The JWT is stored in `localStorage` for simplicity — fine for a portfolio demo, but call this out
+  (or swap to an httpOnly cookie) if you talk through security tradeoffs in an interview.
+- `src/lib/api.js` is the single place that knows about the backend's shape — swap `VITE_API_URL` and
+  everything else keeps working.
