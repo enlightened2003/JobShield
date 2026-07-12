@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { fetchHistory, fetchStats } from "../lib/api";
 
-import DashboardHero from "../components/dashboard/DashboardHero";
-import StatsGrid from "../components/dashboard/StatsGrid";
-import RecentScans from "../components/dashboard/RecentScans";
-import QuickActions from "../components/dashboard/QuickActions";
+import DashboardHero from "../components/Dashboard/DashboardHero";
+import StatsGrid from "../components/Dashboard/StatsGrid";
+import RecentScans from "../components/Dashboard/RecentScans";
+import QuickActions from "../components/Dashboard/QuickActions";
 
 import ScanLoader from "../components/ScanLoader";
 
