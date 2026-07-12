@@ -1,78 +1,195 @@
-import { NavLink, useNavigate } from 'react-router-dom'
-import { LayoutDashboard, ScanSearch, History, LogOut } from 'lucide-react'
-import Logo from './Logo'
-import { useAuth } from '../context/AuthContext'
+import { useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
+import {
+  LayoutDashboard,
+  ScanSearch,
+  History,
+  LogOut,
+  Menu,
+  X,
+} from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import Logo from "./Logo";
+import { useAuth } from "../context/AuthContext";
 
 const links = [
-  { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/analyze', label: 'Scan a posting', icon: ScanSearch },
-  { to: '/history', label: 'History', icon: History },
-]
+  {
+    label: "Dashboard",
+    to: "/dashboard",
+    icon: LayoutDashboard,
+  },
+  {
+    label: "Analyze",
+    to: "/analyze",
+    icon: ScanSearch,
+  },
+  {
+    label: "History",
+    to: "/history",
+    icon: History,
+  },
+];
 
 export default function Navbar() {
-  const { user, logout } = useAuth()
-  const navigate = useNavigate()
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const [open, setOpen] = useState(false);
 
   function handleLogout() {
-    logout()
-    navigate('/login')
+    logout();
+    navigate("/login");
   }
 
   return (
-    <header className="sticky top-0 z-20 border-b border-ink-600 bg-ink-900/85 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3.5">
-        <NavLink to="/dashboard" className="flex items-center gap-2">
-          <Logo size={24} />
-          <span className="font-display text-base font-semibold text-mist-50">JobShield</span>
-        </NavLink>
+    <>
+      <header className="sticky top-0 z-50 border-b border-white/10 bg-black/35 backdrop-blur-xl">
+        <div className="mx-auto flex h-18 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+          {/* Logo */}
 
-        <nav className="hidden items-center gap-1 sm:flex">
-          {links.map(({ to, label, icon: Icon }) => (
-            <NavLink
-              key={to}
-              to={to}
-              className={({ isActive }) =>
-                `flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-                  isActive
-                    ? 'bg-ink-700 text-mist-50'
-                    : 'text-mist-400 hover:bg-ink-800 hover:text-mist-200'
-                }`
-              }
-            >
-              <Icon className="h-4 w-4" />
-              {label}
-            </NavLink>
-          ))}
-        </nav>
-
-        <div className="flex items-center gap-3">
-          <span className="hidden font-mono-num text-xs text-mist-400 sm:inline">{user?.username}</span>
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-1.5 rounded-lg border border-ink-600 px-3 py-1.5 text-sm text-mist-200 transition-colors hover:border-danger-500/40 hover:text-danger-500"
+          <NavLink
+            to="/dashboard"
+            className="flex items-center gap-3"
           >
-            <LogOut className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Log out</span>
+            <Logo animated size={34} />
+
+            <div>
+              <h1 className="text-lg font-bold tracking-tight text-white">
+                JobShield
+              </h1>
+
+              <p className="text-xs text-slate-400">
+                AI Scam Detection
+              </p>
+            </div>
+          </NavLink>
+
+          {/* Desktop */}
+
+          <nav className="hidden items-center gap-2 md:flex">
+            {links.map(({ to, label, icon: Icon }) => (
+              <NavLink key={to} to={to}>
+                {({ isActive }) => (
+                  <motion.div
+                    whileHover={{ y: -2 }}
+                    whileTap={{ scale: 0.97 }}
+                    className={`flex items-center gap-2 rounded-xl px-4 py-2 transition-all duration-300 ${
+                      isActive
+                        ? "bg-blue-600 text-white shadow-lg shadow-blue-600/25"
+                        : "text-slate-300 hover:bg-white/5 hover:text-white"
+                    }`}
+                  >
+                    <Icon size={18} />
+                    {label}
+                  </motion.div>
+                )}
+              </NavLink>
+            ))}
+          </nav>
+
+          {/* Desktop User */}
+
+          <div className="hidden items-center gap-4 md:flex">
+            <div className="text-right">
+              <p className="text-sm font-semibold text-white">
+                {user?.username}
+              </p>
+
+              <p className="text-xs text-slate-500">
+                Welcome back
+              </p>
+            </div>
+
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={handleLogout}
+              className="rounded-xl border border-red-500/20 bg-red-500/10 p-2 text-red-400 transition hover:bg-red-500 hover:text-white"
+            >
+              <LogOut size={18} />
+            </motion.button>
+          </div>
+
+          {/* Mobile */}
+
+          <button
+            onClick={() => setOpen(true)}
+            className="rounded-lg p-2 text-white md:hidden"
+          >
+            <Menu size={24} />
           </button>
         </div>
-      </div>
+      </header>
 
-      <nav className="flex items-center gap-1 overflow-x-auto border-t border-ink-600 px-4 py-2 sm:hidden">
-        {links.map(({ to, label, icon: Icon }) => (
-          <NavLink
-            key={to}
-            to={to}
-            className={({ isActive }) =>
-              `flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium ${
-                isActive ? 'bg-ink-700 text-mist-50' : 'text-mist-400'
-              }`
-            }
-          >
-            <Icon className="h-3.5 w-3.5" />
-            {label}
-          </NavLink>
-        ))}
-      </nav>
-    </header>
-  )
+      <AnimatePresence>
+        {open && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.55 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setOpen(false)}
+              className="fixed inset-0 z-40 bg-black"
+            />
+
+            <motion.aside
+              initial={{ x: -320 }}
+              animate={{ x: 0 }}
+              exit={{ x: -320 }}
+              transition={{ duration: 0.25 }}
+              className="fixed left-0 top-0 z-50 flex h-full w-72 flex-col border-r border-white/10 bg-[#09090B] p-6"
+            >
+              <div className="mb-10 flex items-center justify-between">
+                <Logo animated size={36} />
+
+                <button onClick={() => setOpen(false)}>
+                  <X className="text-white" />
+                </button>
+              </div>
+
+              <div className="space-y-2">
+                {links.map(({ to, label, icon: Icon }) => (
+                  <NavLink
+                    key={to}
+                    to={to}
+                    onClick={() => setOpen(false)}
+                    className={({ isActive }) =>
+                      `flex items-center gap-3 rounded-xl px-4 py-3 transition ${
+                        isActive
+                          ? "bg-blue-600 text-white"
+                          : "text-slate-400 hover:bg-white/5 hover:text-white"
+                      }`
+                    }
+                  >
+                    <Icon size={18} />
+                    {label}
+                  </NavLink>
+                ))}
+              </div>
+
+              <div className="mt-auto border-t border-white/10 pt-6">
+                <div className="mb-5">
+                  <p className="text-sm font-semibold text-white">
+                    {user?.username}
+                  </p>
+
+                  <p className="text-xs text-slate-500">
+                    Signed in
+                  </p>
+                </div>
+
+                <button
+                  onClick={handleLogout}
+                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-red-500 py-3 font-medium text-white transition hover:bg-red-600"
+                >
+                  <LogOut size={18} />
+                  Logout
+                </button>
+              </div>
+            </motion.aside>
+          </>
+        )}
+      </AnimatePresence>
+    </>
+  );
 }

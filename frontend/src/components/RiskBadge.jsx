@@ -1,16 +1,58 @@
-const STYLES = {
-  LOW: 'text-safe-500 bg-safe-500/10 border-safe-500/30',
-  MEDIUM: 'text-caution-500 bg-caution-500/10 border-caution-500/30',
-  HIGH: 'text-danger-500 bg-danger-500/10 border-danger-500/30',
-}
+import { ShieldAlert, ShieldCheck, ShieldQuestion } from "lucide-react";
+import { motion } from "framer-motion";
 
-export default function RiskBadge({ level }) {
+const variants = {
+  LOW: {
+    label: "Safe",
+    icon: ShieldCheck,
+    className:
+      "border-emerald-500/20 bg-emerald-500/10 text-emerald-400",
+  },
+
+  MEDIUM: {
+    label: "Medium",
+    icon: ShieldQuestion,
+    className:
+      "border-amber-500/20 bg-amber-500/10 text-amber-400",
+  },
+
+  HIGH: {
+    label: "High",
+    icon: ShieldAlert,
+    className:
+      "border-red-500/20 bg-red-500/10 text-red-400",
+  },
+};
+
+export default function RiskBadge({ level = "LOW" }) {
+  const badge = variants[level] || variants.LOW;
+  const Icon = badge.icon;
+
   return (
-    <span
-      className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold uppercase tracking-wide ${STYLES[level] || STYLES.LOW}`}
+    <motion.div
+      whileHover={{
+        scale: 1.05,
+      }}
+      transition={{
+        duration: 0.2,
+      }}
+      className={`
+        inline-flex
+        items-center
+        gap-2
+        rounded-full
+        border
+        px-3
+        py-1.5
+        text-xs
+        font-semibold
+        backdrop-blur-xl
+        ${badge.className}
+      `}
     >
-      <span className="h-1.5 w-1.5 rounded-full bg-current" />
-      {level}
-    </span>
-  )
+      <Icon size={14} />
+
+      {badge.label}
+    </motion.div>
+  );
 }
